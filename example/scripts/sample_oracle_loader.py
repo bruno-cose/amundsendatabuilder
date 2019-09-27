@@ -5,7 +5,7 @@ This is a example script which demo how to load data into neo4j without using Ai
 import logging
 from pyhocon import ConfigFactory
 # from urllib import unquote_plus
-
+import sys
 from elasticsearch import Elasticsearch
 from databuilder.extractor.neo4j_es_last_updated_extractor import Neo4jEsLastUpdatedExtractor
 from databuilder.extractor.neo4j_search_data_extractor import Neo4jSearchDataExtractor
@@ -34,7 +34,10 @@ LOGGER.setLevel(logging.INFO)
 # Disable snowflake logging
 logging.getLogger("oracle_metadata.connector.network").disabled = True
 
-ORACLE_CONN_STRING = ''
+user = sys.argv[1]
+password = sys.argv[2]
+service = sys.argv[3]
+ORACLE_CONN_STRING = 'oracle://{0}:{1}@{2}'.format(user,password,service)
 
 # change to the address of Elasticsearch service
 es = Elasticsearch([
