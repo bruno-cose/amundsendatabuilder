@@ -1,5 +1,5 @@
 import logging
-# import six
+
 from collections import namedtuple
 
 from pyhocon import ConfigFactory, ConfigTree  # noqa: F401
@@ -19,9 +19,10 @@ LOGGER = logging.getLogger(__name__)
 
 class OracleMetadataExtractor(Extractor):
     """
-    Extracts Postgres table and column metadata from underlying meta store database using SQLAlchemyExtractor
+    Extracts Oracle Autonomous Databas table and column metadata from underlying meta store database using SQLAlchemyExtractor
     """
     # SELECT statement from oracle user_tab_columns to extract table and column metadata
+    # Column and Table Descriptions is taken from user_tab_columns and user_col_comments
     SQL_STATEMENT = """
     SELECT {cluster_source} as "cluster",(SELECT sys_context('USERENV', 'CURRENT_SCHEMA') FROM dual) as "schema_name", a.table_name as "name", c.comments as "description",
     a.column_name as "col_name", a.data_type as "col_type", d.comments as "col_description", a.column_id as "col_sort_order"
@@ -59,8 +60,6 @@ class OracleMetadataExtractor(Extractor):
             cluster_source = "'{}'".format(self._cluster)
 
         database = conf.get_string(OracleMetadataExtractor.DATABASE_KEY, default='oracle')
-        # if six.PY2 and isinstance(database, six.text_type):
-        #     database = database.encode('utf-8', 'ignore')
 
         self._database = database
 
